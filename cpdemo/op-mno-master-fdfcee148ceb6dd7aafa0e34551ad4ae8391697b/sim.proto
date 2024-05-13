@@ -1,0 +1,375 @@
+syntax = "proto3";
+
+package cp.connect.proto.simapi;
+
+
+option go_package = "codeup.aliyun.com/6145b2b428003bdc3daa97c8/connect-platform/cp-connect/proto/gen";
+
+service CPSimService {
+  rpc GetCustomerSimUsage(GetCustomerSimInfoReq)returns(GetCustomerSimUsageResp){}
+  rpc GetCustomerSimStatus(GetCustomerSimInfoReq)returns(GetCustomerSimStatusResp){}
+  rpc Suspended(StartOrCloseFlowReq) returns (StartOrCloseFlowResp) {}
+  rpc Start(StartOrCloseFlowReq) returns (StartOrCloseFlowResp) {}
+  rpc ChangeSim(ChangeSimReq) returns (ChangeSimResp) {}
+  rpc SendMessage(SendMessageReq) returns (SendMessageResp) {}
+  rpc AddSim(AddSimReq) returns (AddSimResp) {}
+  rpc UpdateSimCanTest(UpdateSimCanTestReq) returns (UpdateSimCanTestResp) {}
+  rpc EditSim(AddSimReq) returns (AddSimResp) {}
+  rpc BatchSyncSim(BatchSyncSimReq) returns (BatchSyncSimResp) {}
+  rpc GetSimLocation(GetSimLocationReq) returns (GetSimLocationResp) {}
+  rpc PushSimData(PushSimDataReq) returns (PushSimDataResp) {}
+  rpc GetSimSms(GetSimSmsReq) returns (GetSimSmsResp) {}
+  rpc HandleBillErr(HandleBillErrReq) returns (HandleBillErrResp) {}
+  rpc UpdateSimEffectiveTime(UpdateSimEffectiveTimeReq) returns (UpdateSimEffectiveTimeResp) {}
+  rpc Cp_UpdateSimFlowTime(CpUpdateSimFlowTimeReq) returns (CpUpdateSimFlowTimeResp) {}
+  rpc EditSimDeviceId(EditSimDeviceIdReq) returns (EditSimDeviceIdResp) {}
+}
+
+
+message CpUpdateSimFlowTimeReq {
+  string identifier = 1;
+  string flowTime = 2;
+  string simId = 3;
+}
+
+message CpUpdateSimFlowTimeResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回内容
+  string result = 3;
+}
+
+message UpdateSimEffectiveTimeReq {
+  string EffectiveTime = 1;
+  string SimId = 2;
+}
+
+message UpdateSimEffectiveTimeResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回内容
+  string result = 3;
+}
+
+message UpdateSimCanTestReq {
+  string    requestId =1;
+  EventStatus       eventStatus=2;
+  DeviceDetails deviceDetails=3;
+  string    profileSwitchState=4;
+  string    owningCarrier=5;
+
+}
+
+message  EventStatus {
+  string    code=1;
+  string    description=2;
+}
+message DeviceDetails {
+  string    iccid=1;
+  string    imsi=2;
+  string    msisdn=3;
+}
+
+
+message UpdateSimCanTestResp {
+  //返回编码 200：成功；500：失败
+  string codes = 1;
+  SimTestErrs body=2;
+}
+message SimTestErrs{
+  repeated SimErrs errors=1;
+
+}
+message SimErrs{
+  string  code= 1;
+  string  description=2;
+}
+
+
+
+message AddSimReq {
+  string iccid = 1;
+  string imsi = 2;
+  string msisdn = 3;
+  string customerID = 4;
+  string operatorId = 5;
+  string clientId = 6;
+}
+
+message AddSimResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回内容
+  string data = 3;
+}
+message GetCustomerSimInfoReq {
+  string Identifier = 1;
+  string SimId = 2;
+}
+
+message GetCustomerSimUsageResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  SimInfoResp result = 3;
+}
+
+message SimInfoResp {
+  string iccid = 1;
+  string imsi = 2;
+  string msisdn = 3;
+  string simStatus = 4;
+  string voiceCallLimit = 5;
+  string voiceCallUsage = 6;
+  string smsLimit = 7;
+  string smsUsage = 8;
+  BasicInfo basic = 9;
+  EntertainmentInfo entertainment = 10;
+  string firstActivateTime = 11;
+}
+
+message BasicInfo {
+  string dataLimit = 1;
+  string dataUsage = 2;
+  string expireDate = 3;
+  string dataLeft = 4;
+}
+
+message EntertainmentInfo {
+  string dataLimit = 1;
+  string dataUsage = 2;
+  string expireDate = 3;
+  string dataLeft = 4;
+}
+
+message GetCustomerSimStatusResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  SimStatus result = 3;
+}
+
+message SimStatus {
+  string status = 1;
+  string firstActivateTime = 2;
+}
+
+message StartOrCloseFlowReq {
+  string Identifier = 1;
+  repeated string SimIds = 2;
+}
+
+message StartOrCloseFlowResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  StartOrCloseFlowInfo result = 3;
+}
+
+message StartOrCloseFlowInfo {
+  repeated StartOrCloseFlowDetail success = 1;
+  repeated StartOrCloseFlowDetail failure = 2;
+}
+
+message StartOrCloseFlowDetail {
+  string opCode = 1;
+  string simId = 2;
+  string reason = 3;
+}
+
+message ChangeSimReq {
+  string Identifier = 1;
+  string NewSimId = 2;
+  string OldSimId = 3;
+}
+
+message ChangeSimResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  string result = 3;
+}
+
+message SendMessageReq {
+  string identifier = 1;
+  repeated SimId sims = 2;
+  //短信内容
+  string message = 3;
+  string messageEncoding = 4;
+  string dataCoding = 5;
+}
+
+message SimId {
+  string simId = 1;
+}
+
+message SendMessageResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  SendMessageResultInfo result = 3;
+}
+
+message SendMessageResultInfo {
+  string serialNumber = 1;
+  repeated SendMessageResult success = 2;
+  repeated SendMessageResult failure = 3;
+}
+
+message SendMessageResult {
+  string opCode = 1;
+  string simId = 2;
+  string reason = 3;
+}
+
+message BatchSyncSimReq {
+  string identifier = 1;
+  repeated string simIds = 2;
+  string clientId = 3;
+}
+
+message BatchSyncSimResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  BatchSyncSimInfo result = 3;
+}
+
+message BatchSyncSimInfo {
+  repeated BatchSyncSimSuccessResult success = 1;
+  repeated BatchSyncSimFailureResult failure = 2;
+}
+
+message BatchSyncSimSuccessResult {
+  string iccid = 1;
+  string imsi = 2;
+  string msisdn = 3;
+  string carrierCode = 4;
+  string status = 5;
+  string operType = 6;
+  string addTime = 7;
+}
+
+message BatchSyncSimFailureResult {
+  string opCode = 1;
+  string simId = 2;
+  string reason = 3;
+}
+
+
+message GetSimLocationReq {
+  string identifier = 1;
+  string simId = 2;
+}
+
+message GetSimLocationResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //sim卡经纬度信息
+  SimLocationInfo result = 3;
+}
+
+message SimLocationInfo {
+  //纬度
+  string latitude = 1;
+  //经度
+  string longitude = 2;
+}
+
+message PushSimDataReq {
+  //客户id
+  string CustomerId = 1;
+  //clientId
+  string ClientId = 2;
+  // Iccid
+  string Iccid = 3;
+}
+
+message PushSimDataResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  // 返回对象
+  string result = 3;
+}
+message GetSimSmsReq {
+
+  int64 id = 1;
+
+}
+
+message GetSimSmsResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  // 返回对象
+  SimSms result = 3;
+}
+
+message SimSms{
+  string ID = 1;
+  string  MsgId = 2;
+  string Iccid = 3;
+  string Msisdn = 4;
+  string MsgType = 5;
+  string MessageContent = 6;
+  string ReceivedTime = 7;
+  string SentTime = 8;
+  string ModifiedTime = 9;
+  string  MsgStatus = 10;
+  string  DataCoding = 11;
+  string OperatorId = 12;
+  string CreateTime = 13;
+}
+
+message HandleBillErrReq {
+  string billId = 1;
+  string iccid = 2;
+  int32 apnType = 3;
+  int32 changeEvent = 4;
+}
+
+message HandleBillErrResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  // 返回对象
+  string result = 3;
+}
+
+message EditSimDeviceIdReq {
+  string iccid = 1;
+  string deviceId = 2;
+}
+
+message EditSimDeviceIdResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  // 返回对象
+  string result = 3;
+}

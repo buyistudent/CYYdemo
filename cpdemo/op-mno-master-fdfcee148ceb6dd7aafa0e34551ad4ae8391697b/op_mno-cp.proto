@@ -1,0 +1,382 @@
+syntax = "proto3";
+
+package cp.connect.proto.mnoapi;
+
+
+option go_package = "codeup.aliyun.com/6145b2b428003bdc3daa97c8/connect-platform/cp-connect/proto/gen";
+
+service MnoCpService {
+  rpc MnoCp_Package(MnoCpPackageReq)returns(MnoCpPackageResp){}
+  rpc MnoCp_Order(MnoCpOrderReq)returns(MnoCpOrderResp){}
+  rpc MnoCp_Stop(MnoCpStopReq)returns(MnoCpStopResp){}
+  rpc MnoCp_Resume(MnoCpResumeReq)returns(MnoCpResumeResp){}
+  rpc MnoCp_Usage(MnoCpUsageReq)returns(MnoCpUsageResp){}
+  rpc MnoCp_Status(MnoCpStatusReq)returns(MnoCpStatusResp){}
+  rpc MnoCp_OrderRecord(MnoCpProductOrderListReq)returns(MnoCpProductOrderListResp){}
+
+  rpc MnoCp_Sent(MnoCpSentReq)returns(MnoCpSentResp){}
+  rpc MnoCp_SmsDetails(MnoCpSmsDetailsReq)returns(MnoCpSmsDetailsResp){}
+
+  rpc MnoCp_UpdatESimTest(MnoCpUpdatESimTestReq) returns (MnoCpUpdatESimTestResp) {}
+  rpc MnoCp_UpdatSimTest(MnoCpUpdatSimTestReq) returns (MnoCpUpdatSimTestResp) {}
+  rpc MnoCp_SendMessage(MnoCpSendMessageReq) returns (MnoCpSendMessageResp) {}
+  //sim卡流量用量查询
+  rpc MnoCp_GetSimUsage(MnoCpGetSimUsageReq) returns (MnoCpGetSimUsageResp) {}
+
+}
+message MnoCpSendMessageReq {
+  string identifier = 1;
+  repeated MnoCpSimId sims = 2;
+  //短信内容
+  string message = 3;
+  string messageEncoding = 4;
+  string dataCoding = 5;
+}
+
+message MnoCpSimId {
+  string simId = 1;
+}
+
+message MnoCpSendMessageResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  MnoCpSendMessageResultInfo result = 3;
+}
+
+message MnoCpSendMessageResultInfo {
+  string serialNumber = 1;
+  repeated MnoCpSendMessageResult success = 2;
+  repeated MnoCpSendMessageResult failure = 3;
+}
+
+message MnoCpSendMessageResult {
+  string opCode = 1;
+  string simId = 2;
+  string reason = 3;
+}
+
+message MnoCpUpdatESimTestReq {
+  string    requestId =1;
+  MnoCpEventStatus       eventStatus=2;
+  MnoCpDeviceDetails deviceDetails=3;
+  string    profileSwitchState=4;
+  string    owningCarrier=5;
+  string    deviceId=6;
+
+}
+
+message  MnoCpEventStatus {
+  string    code=1;
+  string    description=2;
+}
+message MnoCpDeviceDetails {
+  string    iccid=1;
+  string    imsi=2;
+  string    msisdn=3;
+}
+
+
+message MnoCpUpdatESimTestResp {
+  //返回编码 200：成功；500：失败
+  string codes = 1;
+  MnoCpSimTestErrs body=2;
+}
+message MnoCpSimTestErrs{
+  repeated MnoCpSimErrs errors=1;
+
+}
+message MnoCpSimErrs{
+  string  code= 1;
+  string  description=2;
+}
+
+message MnoCpUpdatSimTestReq {
+  string identifier = 1;
+  string simId = 2;
+}
+
+message MnoCpUpdatSimTestResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回内容
+  string result = 3;
+}
+
+
+
+
+message MnoCpPackageReq {
+
+  string    packageType = 1;
+
+
+}
+
+message MnoCpPackageResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+
+  //返回对象
+  MnoPageInfoResp result = 3;
+}
+
+message  MnoPageInfoResp{
+  repeated Package  package = 1;
+}
+
+message  Package {
+
+  string packageId = 1;
+  string  packageName = 2;
+  string operator = 3;
+  string  packageType = 4;
+  int64 serverTime = 5;
+
+}
+
+message MnoCpOrderReq{
+  string    identifier = 1;
+  string    simId = 2;
+  string    packageId = 3;
+
+}
+
+message MnoCpOrderResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+
+  //返回对象
+  MnoCpOrderz result = 3;
+}
+
+message MnoCpOrderz{
+  string orderId = 1;
+}
+
+message MnoCpStopReq{
+  string    identifier = 1;
+  string    simId = 2;
+
+}
+
+message MnoCpStopResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  string result = 3;
+}
+
+
+message MnoCpResumeReq{
+  string    identifier = 1;
+  string    simId = 2;
+
+}
+
+message MnoCpResumeResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  string result = 3;
+}
+
+
+message MnoCpUsageReq{
+  string    identifier = 1;
+  string    simId = 2;
+
+
+}
+
+message MnoCpUsageResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  MnoUsageInfoResp result = 3;
+}
+
+message MnoUsageInfoResp{
+  string iccid = 1;
+  string imsi = 2;
+  string msisdn = 3;
+  Basic  basic = 4;
+  Entertainment entertainment = 5;
+
+}
+
+message  Basic{
+  string dataLimit = 1;
+  string dataUsage = 2;
+  string dataLeft = 3;
+  string expireDate = 4;
+}
+
+message Entertainment {
+  string dataLimit = 1;
+  string dataUsage = 2;
+  string dataLeft = 3;
+  string expireDate = 4;
+
+}
+
+
+
+message MnoCpStatusReq{
+  string    identifier = 1;
+  string    simId = 2;
+
+
+}
+
+message MnoCpStatusResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  MnoStatusInfoResp result = 3;
+}
+
+message  MnoStatusInfoResp{
+  string status = 1;
+}
+
+
+
+message MnoCpSentReq{
+  string    identifier = 1;
+  string    simId = 2;
+  string message = 3;
+  string  messageEncoding = 4;
+  string dataCoding = 5;
+
+}
+
+
+
+message MnoCpSentResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  SentResult result = 3;
+}
+
+
+message   SentResult{
+  string smsId = 1;
+}
+
+
+message MnoCpProductOrderListReq{
+  string    identifier = 1;
+  string    simId = 2;
+
+
+}
+
+
+message MnoCpProductOrderListResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  CpProductOrder result = 3;
+}
+
+message  CpProductOrder{
+  repeated  CpOrder   order = 1;
+
+}
+
+message  CpOrder{
+  string  OrderId = 1;//订单ID
+  string PackageId = 2;//套餐ID
+  string PackageName = 3;//套餐名称
+  int32 ServerTime = 4;//套餐服务时长（单位：月
+  string OrderState = 5;//订购状态：“0”=待生效；“1”=生效中；“2”=已完成
+  string  OrderTime = 6;//订购时间
+  string FinishTime = 7;//完成时间
+  string EffectTime = 8;//生效时间
+}
+
+
+message MnoCpSmsDetailsReq{
+  string    smsId = 1;
+
+
+}
+
+message MnoCpSmsDetailsResp{
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //返回对象
+  MnoSimSmsDetail result = 3;
+}
+
+message MnoSimSmsDetail{
+  string  smsId = 1;
+  string iccid = 2;
+  string imsi = 3;
+  string msisdn = 4;
+  string smsType = 5;
+  string smsMsg = 6;
+  string dataCoding = 7;
+  string smsStatus = 8;
+  string sentTime = 9;
+  string receivedTime = 10;
+}
+
+message MnoCpGetSimUsageReq {
+  //sim卡识别码标识符 ICCID、IMSI、MSISDN
+  string identifier = 1;
+  //sim卡识别码
+  string simId = 2;
+}
+
+message MnoCpGetSimUsageResp {
+  //返回编码 200：成功；500：失败
+  string code = 1;
+  //返回消息体
+  string message = 2;
+  //sim卡流量对象
+  GetSimUsage result = 3;
+}
+
+message GetSimUsage {
+  //iccid
+  string iccid = 1;
+  //imsi
+  string imsi = 2;
+  //msisdn
+  string msisdn = 3;
+  //SIM卡总流量上限(单位：KB)
+  string dataLimit = 4;
+  //SIM卡已使用量总量(单位：KB)
+  string dataUsage = 5;
+  //卡套餐到期时间（例：20221126）
+  string expireDate = 6;
+}
+
+
+
+

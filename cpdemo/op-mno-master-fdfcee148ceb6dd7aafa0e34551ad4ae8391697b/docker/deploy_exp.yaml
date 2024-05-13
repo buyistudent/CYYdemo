@@ -1,0 +1,111 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: $APPNAME
+  namespace: $NAMESPACE
+  labels:
+    app: $APPNAME
+    version: $VERSION
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $APPNAME
+      version: $VERSION
+  template:
+    metadata:
+      labels:
+        app: $APPNAME
+        version: $VERSION
+    spec:
+      volumes:
+        - name: host-time  #挂载本地时区
+          hostPath:
+            path: /etc/localtime
+      containers:
+        - name: $APPNAME
+          image: $K8SHARBOR/$PROJECT_DIR/$APPNAME:$TAG
+          ports:
+            - name: http-$APPPORT
+              containerPort: $APPPORT
+              protocol: TCP
+          resources: 
+            #requests:
+              #cpu: 500m
+              #memory: 512Mi
+            limits:
+              #cpu: 2000m
+              memory: 1024Mi
+          volumeMounts:
+            - name: host-time
+              readOnly: true
+              mountPath: /etc/localtime
+          #livenessProbe:   #端口可用性探针
+            #tcpSocket:
+              #port: $APPPORT
+            #initialDelaySeconds: 60
+            #timeoutSeconds: 5
+            #periodSeconds: 20
+            #successThreshold: 1
+            #failureThreshold: 3
+          #readinessProbe:  #服务就绪探针
+            #tcpSocket:
+              #port: $APPPORT
+            #initialDelaySeconds: 30
+            #timeoutSeconds: 5
+            #periodSeconds: 20
+            #successThreshold: 1
+            #failureThreshold: 3
+          imagePullPolicy: IfNotPresent
+          #volumeMounts:
+            #- name: config
+              #mountPath: /app
+      #volumes:
+        #- name: config
+          #configMap:
+            #name: $APPNAME-config
+            #items:
+            #- key: config.yml
+              #path: config.yal
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      imagePullSecrets:
+        - name: harbor-account
+      affinity:   #POD亲和性策略（副本尽量分散到每个worker）
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app: $APPNAME
+                topologyKey: kubernetes.io/hostname
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate    #更新策略
+    rollingUpdate:
+      maxUnavailable: 0   
+      maxSurge: 5
+  minReadySeconds: 25
+  revisionHistoryLimit: 2
+  progressDeadlineSeconds: 600
+---
+#SERVICE如果服务需要配置外部访问type配置为NodePort，如果只是POD调用type配置ClusterIP即可
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: $APPNAME
+  name: $APPNAME-svc
+  namespace: $NAMESPACE
+spec:
+  ports:
+    - name: http2-$APPPORT
+      port: $APPPORT
+      protocol: TCP
+      targetPort: $APPPORT
+  selector:
+    app: $APPNAME
+  type: NodePort

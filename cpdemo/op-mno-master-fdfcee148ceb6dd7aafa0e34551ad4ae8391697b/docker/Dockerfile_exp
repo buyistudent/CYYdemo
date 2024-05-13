@@ -1,0 +1,7 @@
+#FROM内网基础镜像，速度快.
+FROM golang
+RUN mkdir -p /app/config
+WORKDIR /app
+COPY ./$APPNAME .
+COPY ./config.yml ./config/
+CMD ["./$APPNAME"]
